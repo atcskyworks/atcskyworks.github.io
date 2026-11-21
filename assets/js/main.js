@@ -29,6 +29,53 @@
     });
   }
 
+  // Portfolio lightbox: click a photo for a full-screen preview.
+  var lb = document.getElementById('lightbox');
+  if (lb) {
+    var lbImg = lb.querySelector('img');
+    var lbTitle = lb.querySelector('.lb-cap strong');
+    var lbText = lb.querySelector('.lb-cap span');
+    var lbCount = lb.querySelector('.lb-count');
+    var current = [];
+    var idx = 0;
+    function visibleItems() {
+      return Array.prototype.filter.call(items, function (it) { return it.style.display !== 'none'; });
+    }
+    function show(i) {
+      idx = (i + current.length) % current.length;
+      var item = current[idx];
+      var img = item.querySelector('img.photo');
+      lbImg.src = img.src;
+      lbImg.alt = img.alt || '';
+      var h = item.querySelector('.pf-body h3');
+      var p = item.querySelector('.pf-body p');
+      lbTitle.textContent = h ? h.textContent : '';
+      lbText.textContent = p ? p.textContent : '';
+      lbCount.textContent = (idx + 1) + ' / ' + current.length;
+    }
+    items.forEach(function (item) {
+      var img = item.querySelector('img.photo');
+      if (!img) return;
+      img.addEventListener('click', function () {
+        current = visibleItems();
+        show(current.indexOf(item));
+        lb.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    function close() { lb.classList.remove('open'); document.body.style.overflow = ''; }
+    lb.querySelector('.lb-close').addEventListener('click', close);
+    lb.querySelector('.lb-prev').addEventListener('click', function (e) { e.stopPropagation(); show(idx - 1); });
+    lb.querySelector('.lb-next').addEventListener('click', function (e) { e.stopPropagation(); show(idx + 1); });
+    lb.addEventListener('click', function (e) { if (e.target === lb) close(); });
+    document.addEventListener('keydown', function (e) {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'Escape') close();
+      if (e.key === 'ArrowLeft') show(idx - 1);
+      if (e.key === 'ArrowRight') show(idx + 1);
+    });
+  }
+
   // Quote form: compose an email to info@atcskyworks.com (stage 1).
   // Stage 3: replace with a hosted form handler so no mail app is needed.
   var form = document.getElementById('quote-form');
