@@ -36,10 +36,11 @@
     var lbTitle = lb.querySelector('.lb-cap strong');
     var lbText = lb.querySelector('.lb-cap span');
     var lbCount = lb.querySelector('.lb-count');
+    var lbItems = document.querySelectorAll('.pf-item');
     var current = [];
     var idx = 0;
     function visibleItems() {
-      return Array.prototype.filter.call(items, function (it) { return it.style.display !== 'none'; });
+      return Array.prototype.filter.call(lbItems, function (it) { return it.style.display !== 'none'; });
     }
     function show(i) {
       idx = (i + current.length) % current.length;
@@ -53,7 +54,7 @@
       lbText.textContent = p ? p.textContent : '';
       lbCount.textContent = (idx + 1) + ' / ' + current.length;
     }
-    items.forEach(function (item) {
+    lbItems.forEach(function (item) {
       var img = item.querySelector('img.photo');
       if (!img) return;
       img.addEventListener('click', function () {
