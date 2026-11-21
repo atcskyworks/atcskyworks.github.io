@@ -1,5 +1,17 @@
 // ATC SkyWorks — main.js
 (function () {
+  // Hero video: nudge autoplay (some mobile browsers need an explicit play call).
+  var heroVideo = document.querySelector('.hero-video');
+  if (heroVideo) {
+    var tryPlay = function () {
+      var p = heroVideo.play();
+      if (p && p.catch) p.catch(function () {});
+    };
+    tryPlay();
+    document.addEventListener('touchstart', tryPlay, { once: true });
+    document.addEventListener('click', tryPlay, { once: true });
+  }
+
   // Footer year
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
