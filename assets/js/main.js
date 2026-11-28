@@ -12,6 +12,28 @@
     document.addEventListener('click', tryPlay, { once: true });
   }
 
+  // Masked headline video: once the clip can play and CSS masks are supported,
+  // show the live flight footage inside the headline word "Intelligence".
+  // If anything is unsupported, the poster-filled word stays as the fallback.
+  var maskWrap = document.querySelector('.mask-wrap');
+  var maskVideo = document.querySelector('.mask-video');
+  var masksOk = false;
+  try {
+    masksOk = window.CSS && (CSS.supports('mask-image', 'url("x")') || CSS.supports('-webkit-mask-image', 'url("x")'));
+  } catch (e) { masksOk = false; }
+  if (maskWrap && maskVideo && masksOk && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var maskReady = function () {
+      if (heroVideo && isFinite(heroVideo.currentTime)) {
+        try { maskVideo.currentTime = heroVideo.currentTime; } catch (e) {}
+      }
+      var p = maskVideo.play();
+      if (p && p.catch) p.catch(function () {});
+      maskWrap.classList.add('video-on');
+    };
+    if (maskVideo.readyState >= 3) maskReady();
+    else maskVideo.addEventListener('canplay', maskReady, { once: true });
+  }
+
   // Footer year
   var yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
